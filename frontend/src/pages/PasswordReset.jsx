@@ -16,6 +16,7 @@ export default function PasswordReset() {
   const [confirmPassword, setConfirmPassword] = useState("");
   const [errorMessage, setErrorMessage] = useState("");
   const [successMessage, setSuccessMessage] = useState("");
+  const [loading, setLoading] = useState(false);
 
   // Handler for form submission
   const handlePasswordReset = async (e) => {
@@ -37,7 +38,7 @@ export default function PasswordReset() {
       setErrorMessage(error);
       return;
     }
-
+    setLoading(true);
     try {
       console.log("handlePasswordReset: Sending request to reset password...");
 
@@ -65,6 +66,8 @@ export default function PasswordReset() {
       toast.error(errorMessage);
       setErrorMessage(errorMessage);
       setSuccessMessage("");
+    } finally {
+      setLoading(false); // Disable loading state
     }
   };
 
@@ -140,9 +143,12 @@ export default function PasswordReset() {
               {/* Submit Button */}
               <button
                 type="submit"
-                className="bg-navy text-white w-full p-2 rounded text-sm sm:text-base"
+                disabled={loading} // Disable button when loading
+                className={`${
+                  loading ? "bg-gray-400 cursor-not-allowed" : "bg-navy"
+                } text-white w-full p-2 rounded text-sm sm:text-base`}
               >
-                Reset Password
+                {loading ? "Resetting..." : "Reset Password"}
               </button>
             </form>
           </div>

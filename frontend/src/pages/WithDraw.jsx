@@ -12,6 +12,7 @@ export default function WithDraw() {
 
   const [amount, setAmount] = useState("");
   const [message, setMessage] = useState("");
+  const [loading, setLoading] = useState(false);
 
   const handleWithdraw = async (event) => {
     event.preventDefault();
@@ -30,7 +31,7 @@ export default function WithDraw() {
       setMessage("Insufficient balance.");
       return;
     }
-
+    setLoading(true); // Enable loading state
     try {
       // Call the withdraw API
       const response = await withdrawMoney(userData._id, withdrawAmount);
@@ -52,6 +53,8 @@ export default function WithDraw() {
       // Handle any errors during the withdrawal process
       toast.error("Something went wrong during withdrawal!");
       console.log("Withdraw Error:", error);
+    } finally {
+      setLoading(false); // Disable loading state
     }
   };
 
@@ -83,9 +86,12 @@ export default function WithDraw() {
           {/* Withdraw Button */}
           <button
             type="submit"
-            className="bg-navy text-white w-full p-2 rounded text-sm sm:text-base"
+            disabled={loading} // Disable button when loading
+            className={`${
+              loading ? "bg-gray-400 cursor-not-allowed" : "bg-navy"
+            } text-white w-full p-2 rounded text-sm sm:text-base`}
           >
-            Withdraw
+            {loading ? "Processing..." : "Withdraw"}
           </button>
         </form>
 

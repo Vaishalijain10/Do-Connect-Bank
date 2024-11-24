@@ -80,6 +80,7 @@ export const verifyOtp = async (email, otp) => {
     };
   }
 };
+
 // registration details saving in database
 export const registerUser = async (formDataToSubmit) => {
   try {
@@ -228,3 +229,4 @@ export const editUserDetails = async (userId, formData) => {
 };
 
 // @ view-user-details - used redux!
+

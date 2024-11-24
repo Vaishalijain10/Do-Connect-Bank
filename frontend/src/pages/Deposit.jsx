@@ -8,11 +8,13 @@ export default function Deposit() {
   // Local state for deposit amount and feedback messages
   const [depositAmount, setDepositAmount] = useState("");
   const [message, setMessage] = useState("");
+  const [loading, setLoading] = useState(false); // Loading state for buttons
 
   // Access user data and dispatch function from Redux
   const user = useSelector((state) => state.user);
   const dispatch = useDispatch();
   const navigate = useNavigate();
+
   // Handle deposit submission
   const handleDeposit = async (event) => {
     event.preventDefault();
@@ -24,7 +26,7 @@ export default function Deposit() {
       setMessage("Please enter a valid deposit amount.");
       return;
     }
-
+    setLoading(true); // Enable loading state
     try {
       // Call the deposit API
       const response = await depositMoney(user.userData._id, amount);
@@ -43,6 +45,8 @@ export default function Deposit() {
       // Handle errors from the API call
       toast.error("Something went wrong!");
       console.log(error);
+    } finally {
+      setLoading(false); // Disable loading state
     }
   };
 
@@ -83,9 +87,12 @@ export default function Deposit() {
           {/* Deposit Button */}
           <button
             type="submit"
-            className="w-full bg-navy text-white py-2 rounded text-lg hover:bg-navy-dark focus:outline-none"
+            disabled={loading}
+            className={`${
+              loading ? "bg-gray-400 cursor-not-allowed" : "bg-navy"
+            } text-white w-full p-2 rounded text-lg sm:text-base`}
           >
-            Deposit
+            {loading ? "Processing..." : "Deposit"}
           </button>
         </form>
 

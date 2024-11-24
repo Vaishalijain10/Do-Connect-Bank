@@ -16,6 +16,9 @@ export default function Login() {
     password: "",
   });
 
+  // Loading state for button
+  const [loading, setLoading] = useState(false);
+
   if (user.loggedIn) {
     return <Navigate to="/" />;
   }
@@ -35,6 +38,7 @@ export default function Login() {
   async function handleLoginSubmit(event) {
     event.preventDefault();
     console.log("handleLoginSubmit");
+    setLoading(true); // Set loading to true when submitting
     try {
       // LoginUser -> api/UserFunction.js
       const response = await LoginUser(loginFormData);
@@ -44,14 +48,16 @@ export default function Login() {
         dispatch(setAuth(response.userData));
         localStorage.setItem("token", response.token);
         localStorage.setItem("userId", response.userData._id);
-
+        setLoading(false); // Set loading back to false after success
         return navigate("/");
       } else {
         toast.error("Something went wrong!", response.message);
+        setLoading(false); // Set loading back to false after failure
       }
     } catch (error) {
       toast.error("connectivity error");
-      console.log(error);
+      console.log("connectivity error", error);
+      setLoading(false); // Set loading back to false after error
     }
   }
   return (
@@ -88,13 +94,16 @@ export default function Login() {
           required
         />
 
-        {/* Login Button */}
-        <button
+         {/* Login Button */}
+         <button
           type="submit"
-          className="bg-navy text-white w-full p-2 rounded text-sm sm:text-base"
+          disabled={loading}
+          className={`${
+            loading ? "bg-gray-400" : "bg-navy"
+          } text-white w-full p-2 rounded text-sm sm:text-base`}
           onClick={handleLoginSubmit}
         >
-          Login
+          {loading ? "Logging in..." : "Login"}
         </button>
 
         {/* Links for Forgot Password and Register */}

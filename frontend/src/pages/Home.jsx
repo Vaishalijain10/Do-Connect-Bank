@@ -73,12 +73,6 @@ export default function Home() {
             Your trusted partner in financial growth & security.
           </p>
         </div>
-        {/* <h1 className="text-md sm:text-2xl md:text-3xl lg:text-3xl xl:text-4xl font-bold mb-4 bg-black bg-opacity-55 py-1 px-2 text-yellow-50 mx-4">
-          Grow Your Wealth, Secure Your Health with DoCo Bank!
-        </h1>
-        <p className="text-sm sm:text-lg md:text-xl lg:text-2xl xl:text-3xl font-medium bg-[rgba(0,144,14311)] bg-opacity-55 py-1 px-2 mx-4">
-          Your trusted partner in financial growth & security.
-        </p> */}
       </div>
 
       {/* Services Section */}

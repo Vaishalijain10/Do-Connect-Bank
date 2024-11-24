@@ -20,12 +20,14 @@ export default function EditUserDetails() {
     pinCode: user.pinCode || "",
     accountNumber: user.accountNumber || "",
   });
+  const [loading, setLoading] = useState(false);
 
   // Handle input changes
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData((prevData) => ({ ...prevData, [name]: value }));
   };
+
   // handle submit
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -35,7 +37,7 @@ export default function EditUserDetails() {
       toast.error("User ID is missing. Please try again.");
       return;
     }
-
+    setLoading(true); // Enable loading state
     try {
       console.log("handleSubmit: Sending update request to helper function...");
 
@@ -53,6 +55,8 @@ export default function EditUserDetails() {
     } catch (error) {
       console.error("handleSubmit: Unexpected error:", error);
       toast.error("Something went wrong. Please try again.");
+    } finally {
+      setLoading(false); // Disable loading state
     }
   };
 
@@ -181,9 +185,12 @@ export default function EditUserDetails() {
           {/* Submit Button */}
           <button
             type="submit"
-            className="bg-navy text-white w-full p-2 rounded mt-4"
+            disabled={loading} // Disable button when loading
+            className={`${
+              loading ? "bg-gray-400 cursor-not-allowed" : "bg-navy"
+            } text-white w-full p-2 rounded mt-4`}
           >
-            Update Details
+            {loading ? "Updating..." : "Update Details"}
           </button>
         </form>
       </div>

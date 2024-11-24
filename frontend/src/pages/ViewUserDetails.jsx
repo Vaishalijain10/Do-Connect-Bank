@@ -7,9 +7,11 @@ import { RiseLoader } from "react-spinners";
 export default function ViewUserDetails() {
   // Access user data from Redux
   const user = useSelector((state) => state.user);
+  console.log("View user details", user);
+  // view-user-details
   const [loading, setLoading] = useState(true);
-  const imgLink = user?.userData?.profilePhoto
-    ? `${baseUrl}/${user.userData.profilePhoto.split("\\")[1]}`
+  const imgLink = user.userData?.profilePhoto
+    ? `${baseUrl}/${user.userData?.profilePhoto.split("\\")[1]}`
     : "";
 
   useEffect(() => {

@@ -1,10 +1,10 @@
-import multer from 'multer';
-import path from 'path';
+import multer from "multer";
+import path from "path";
 
 // Set up storage engine for Multer
 const storage = multer.diskStorage({
   destination: (req, file, cb) => {
-    cb(null, './Images'); // Specify the folder where you want to save files
+    cb(null, "./Images");
   },
   filename: (req, file, cb) => {
     cb(null, Date.now() + path.extname(file.originalname)); // Ensure unique file names
@@ -20,7 +20,7 @@ const fileFilter = (req, file, cb) => {
   if (extname && mimetype) {
     return cb(null, true); // Accept the file
   } else {
-    cb(new Error('Only image files are allowed.'));
+    cb(new Error("Only image files are allowed."));
   }
 };
 
@@ -30,4 +30,4 @@ const upload = multer({
   fileFilter: fileFilter,
 });
 
-export { upload }; // Named export
+export { upload };

@@ -8,6 +8,7 @@ export default function Register() {
   const [otpRequested, setOtpRequested] = useState(false);
   const [otpVerified, setOtpVerified] = useState(false);
   const [otp, setOtp] = useState("");
+  const [loading, setLoading] = useState(false);
   const Navigate = useNavigate();
   const [formData, setFormData] = useState({
     firstName: "",
@@ -35,6 +36,7 @@ export default function Register() {
     }
 
     try {
+      setLoading(true); // Start loading
       // Call the helper function to request OTP
       const response = await requestOtp(formData.email);
 
@@ -48,6 +50,8 @@ export default function Register() {
     } catch (error) {
       console.error("Error in handleGetOtp:", error);
       toast.error("Error requesting OTP.");
+    } finally {
+      setLoading(false); // Stop loading
     }
   };
 
@@ -59,6 +63,7 @@ export default function Register() {
     }
 
     try {
+      setLoading(true); // Start loading
       // Call the helper function to verify OTP
       const response = await verifyOtp(formData.email, otp);
 
@@ -74,6 +79,8 @@ export default function Register() {
     } catch (error) {
       console.error("Error in handleVerifyOtp:", error);
       toast.error("Error verifying OTP. Please try again.");
+    } finally {
+      setLoading(false); // Stop loading
     }
   };
 
@@ -148,6 +155,7 @@ export default function Register() {
     }
 
     try {
+      setLoading(true); // Start loading
       console.log("handleSubmit: Sending form data to helper function...");
 
       // Call the helper function to register the user
@@ -168,6 +176,8 @@ export default function Register() {
     } catch (error) {
       console.error("handleSubmit: Unexpected error:", error);
       toast.error("Pipeline error! Please try again.");
+    } finally {
+      setLoading(false); // Stop loading
     }
   }
 
@@ -235,6 +245,15 @@ export default function Register() {
               className="w-full p-2 mb-4 border rounded"
               required
             />
+            <input
+              type="tel"
+              name="phoneNumber"
+              value={formData.phoneNumber}
+              onChange={handleChange}
+              placeholder="Phone Number"
+              className="w-full p-2 mb-4 border rounded"
+              required
+            />
 
             <div className="relative w-full mb-4">
               <input
@@ -251,9 +270,14 @@ export default function Register() {
                 <button
                   type="button"
                   onClick={handleGetOtp}
-                  className="absolute right-2 top-1/2 transform -translate-y-1/2 bg-navy text-white px-3 py-1 rounded"
+                  disabled={loading}
+                  className={`absolute right-2 top-1/2 transform -translate-y-1/2 px-3 py-1 rounded ${
+                    loading
+                      ? "bg-gray-400 cursor-not-allowed"
+                      : "bg-navy text-white"
+                  }`}
                 >
-                  Get OTP
+                  {loading ? "Sending OTP..." : "Get OTP"}
                 </button>
               )}
             </div>
@@ -271,21 +295,17 @@ export default function Register() {
                 <button
                   type="button"
                   onClick={handleVerifyOtp}
-                  className="absolute right-2 top-1/2 transform -translate-y-1/2 bg-navy text-white px-3 py-1 rounded"
+                  disabled={loading}
+                  className={`absolute right-2 top-1/2 transform -translate-y-1/2 px-3 py-1 rounded ${
+                    loading
+                      ? "bg-gray-400 cursor-not-allowed"
+                      : "bg-navy text-white"
+                  }`}
                 >
-                  Verify OTP
+                  {loading ? "Verifying..." : "Verify OTP"}
                 </button>
               </div>
             )}
-            <input
-              type="tel"
-              name="phoneNumber"
-              value={formData.phoneNumber}
-              onChange={handleChange}
-              placeholder="Phone Number"
-              className="w-full p-2 mb-4 border rounded"
-              required
-            />
           </>
         )}
 
@@ -386,9 +406,14 @@ export default function Register() {
           ) : (
             <button
               type="submit"
-              className="bg-navy text-white w-full p-2 rounded"
+              disabled={loading}
+              className={`w-full p-2 rounded ${
+                loading
+                  ? "bg-gray-400 cursor-not-allowed"
+                  : "bg-navy text-white"
+              }`}
             >
-              Register
+              {loading ? "Registering..." : "Register"}
             </button>
           )}
         </div>
