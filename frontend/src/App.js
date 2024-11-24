@@ -18,14 +18,17 @@ import Deposit from "./pages/Deposit";
 import PasswordReset from "./pages/PasswordReset";
 import { useDispatch } from "react-redux";
 import { fetchUserDetails } from "./redux/slices/userSlice";
-import { useEffect } from "react";
-
+import { useCallback, useEffect } from "react";
 
 function App() {
   const dispatch = useDispatch();
-  useEffect(() => {
+  const fetchUserDetailsAction = useCallback(() => {
     dispatch(fetchUserDetails());
-  }, []);
+  }, [dispatch]);
+
+  useEffect(() => {
+    fetchUserDetailsAction();
+  }, [fetchUserDetailsAction]);
 
   return (
     <>
