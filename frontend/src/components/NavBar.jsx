@@ -73,11 +73,12 @@ export default function NavBar() {
               alt="logo"
               className="w-8 h-8 sm:w-10 sm:h-10 lg:w-12 lg:h-12"
             />
+
             <Link
               to="/"
-              className="text-lg sm:text-xl lg:text-2xl ml-2 font-bold"
+              className="text-lg sm:text-xl lg:text-2xl ml-2 font-semibold"
             >
-              DoCo Bank!
+              Do Connect Bank - DoCo!
             </Link>
           </div>
 
