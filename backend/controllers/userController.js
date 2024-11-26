@@ -59,7 +59,7 @@ export async function verifyOtp(req, res) {
 export async function registerController(req, res) {
   console.log("Received registration request");
   console.log("Request Body:", req.body);
-  console.log("Uploaded File:", req.file); 
+  console.log("Uploaded File:", req.file);
 
   const {
     firstName,
@@ -76,7 +76,7 @@ export async function registerController(req, res) {
   // console.log("user controller testing: ", req.body);
   try {
     console.log("Finding user by email...");
-    const user = await users.findOne({ email: req.body.email });
+    const user = await users.findOne({ email });
 
     if (!user) {
       console.log("User not found, cannot register.");

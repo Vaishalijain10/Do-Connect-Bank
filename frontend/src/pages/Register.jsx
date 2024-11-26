@@ -25,7 +25,6 @@ export default function Register() {
   });
   const [files, setFiles] = useState([]);
   const [errors, setErrors] = useState({});
-  console.log(errors);
 
   // Function to handle OTP request
   const handleGetOtp = async () => {

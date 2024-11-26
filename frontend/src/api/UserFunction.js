@@ -135,6 +135,7 @@ export const verifyForgotPasswordOtp = async (email, otp) => {
     throw new Error("Failed to verify OTP");
   }
 };
+
 // saving new password in the database
 export const resetForgotPassword = async (email, password) => {
   try {
