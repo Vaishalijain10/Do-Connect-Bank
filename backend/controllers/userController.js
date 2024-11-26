@@ -9,6 +9,7 @@ import {
   generateUniqueAccountNumber,
   GenerateNewPassword,
 } from "../services/helperFuntions.js";
+import { upload } from "../library/Multer.js";
 
 // Request OTP Controller
 export async function requestOtp(req, res) {
@@ -44,10 +45,7 @@ export async function verifyOtp(req, res) {
       return res.send({ status: false, message: "Invalid or expired OTP." });
     }
 
-    await users.updateOne(
-      { email },
-      { otp: null, otpExpiration: null } // Clear OTP after verification
-    );
+    await users.updateOne({ email }, { otp: null, otpExpiration: null });
     res.send({ status: true, message: "OTP verified successfully." });
   } catch (error) {
     console.log("Error in verifyOtp:", error);
@@ -56,65 +54,77 @@ export async function verifyOtp(req, res) {
 }
 
 // registerController -> First name, last name, Phone number, email, state, city, pinCode, Address, Password, Account number, DigitalPin, balance, Profile photo
+// Register Controller
 export async function registerController(req, res) {
   console.log("Received registration request");
-  console.log("Request Body:", req.body);
-  console.log("Uploaded File:", req.file);
 
-  const {
-    firstName,
-    lastName,
-    email,
-    phoneNumber,
-    state,
-    city,
-    pinCode,
-    address,
-    password,
-    digitalPin,
-  } = req.body;
-  // console.log("user controller testing: ", req.body);
-  try {
-    console.log("Finding user by email...");
-    const user = await users.findOne({ email });
-
-    if (!user) {
-      console.log("User not found, cannot register.");
-      return res.send({ status: false, message: "User not found." });
+  upload.single("profilePhoto")(req, res, async (err) => {
+    if (err) {
+      console.error("Error uploading file:", err.message);
+      return res.send({ status: false, message: err.message });
     }
 
-    console.log("Hashing password and digital pin...");
-    const hashedPassword = await bcrypt.hash(password, 10);
-    const hashedDigitalPin = await bcrypt.hash(digitalPin, 10);
+    console.log("Request Body:", req.body);
+    console.log("Uploaded File:", req.file);
 
-    console.log("Generating account number...");
-    const accountNumber = await generateUniqueAccountNumber(); // Ensure this is awaited
+    const {
+      firstName,
+      lastName,
+      email,
+      phoneNumber,
+      state,
+      city,
+      pinCode,
+      address,
+      password,
+      digitalPin,
+    } = req.body;
 
-    console.log("Saving user...");
-    user.firstName = firstName;
-    user.lastName = lastName;
-    user.phoneNumber = phoneNumber;
-    user.state = state;
-    user.city = city;
-    user.pinCode = pinCode;
-    user.address = address;
-    user.password = hashedPassword;
-    user.digitalPin = hashedDigitalPin;
-    user.accountNumber = accountNumber; // Save account number
-    user.balance = 0; // Initial balance
-    user.tempOtp = null; // Clear OTP after registration
-    // Check if a profile photo is uploaded and save its path
-    if (req.file) {
-      user.profilePhoto = req.file.path;
+    try {
+      console.log("Finding user by email...");
+      const user = await users.findOne({ email });
+
+      if (!user) {
+        console.log("User not found, cannot register.");
+        return res.send({ status: false, message: "User not found." });
+      }
+
+      console.log("Hashing password and digital pin...");
+      const hashedPassword = await bcrypt.hash(password, 10);
+      const hashedDigitalPin = await bcrypt.hash(digitalPin, 10);
+
+      console.log("Generating account number...");
+      const accountNumber = await generateUniqueAccountNumber();
+
+      console.log("Saving user...");
+      user.firstName = firstName;
+      user.lastName = lastName;
+      user.phoneNumber = phoneNumber;
+      user.state = state;
+      user.city = city;
+      user.pinCode = pinCode;
+      user.address = address;
+      user.password = hashedPassword;
+      user.digitalPin = hashedDigitalPin;
+      user.accountNumber = accountNumber;
+      user.balance = 0; // Initial balance
+      user.tempOtp = null; // Clear OTP after registration
+
+      // Check if a profile photo is uploaded and save its path
+      if (req.file) {
+        user.profilePhoto = req.file.path;
+      }
+
+      await user.save();
+      console.log("User registered successfully.");
+      res.send({ status: true, message: "User registered successfully." });
+    } catch (error) {
+      console.error("Error during registration:", error);
+      res
+        .status(500)
+        .send({ status: false, message: "Error during registration." });
     }
-
-    await user.save();
-    console.log("User registered successfully.");
-    res.send({ status: true, message: "User registered successfully." });
-  } catch (error) {
-    console.log("Error during registration:", error);
-    res.send({ status: false, message: "Error during registration." });
-  }
+  });
 }
 
 // login controller -> accountNumber, phoneNumber or email, password

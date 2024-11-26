@@ -14,7 +14,7 @@ import {
   requestForgotPasswordOtp,
   verifyForgotPasswordOtp,
 } from "../controllers/userController.js";
-import { upload } from "../library/Multer.js";
+// import { upload } from "../library/Multer.js";
 
 const router = express.Router();
 
@@ -22,18 +22,7 @@ console.log(`At user Route`);
 
 router.post("/request-otp", requestOtp);
 router.post("/verify-otp", verifyOtp);
-router.post(
-  "/register",
-  (req, res, next) => {
-    upload.single("profilePhoto")(req, res, (err) => {
-      if (err) {
-        return res.status(400).send({ status: false, message: err.message });
-      }
-      next();
-    });
-  },
-  registerController
-);
+router.post("/register", registerController);
 
 router.post("/login", loginController);
 // @ redux route
@@ -42,6 +31,7 @@ router.get("/get-current-user-details/:userId", getCurrentUserDetails);
 router.post("/verifyDigitalPin", verifyDigitalPin);
 
 router.put("/editUserDetails", editUserDetails);
+
 
 router.put("/resetPassword", resetPassword);
 

@@ -25,7 +25,7 @@ export default function Register() {
   });
   const [files, setFiles] = useState([]);
   const [errors, setErrors] = useState({});
-  console.log(errors);
+
   // Function to handle OTP request
   const handleGetOtp = async () => {
     if (!formData.email) {
@@ -168,9 +168,7 @@ export default function Register() {
         console.log(
           `handleSubmit: Registration failed. Message: ${response.message}`
         );
-        toast.error(
-          `Email or Phone Number already registered. ${response.message}`
-        );
+        toast.error(`${response.message}`);
       }
     } catch (error) {
       console.error("handleSubmit: Unexpected error:", error);
