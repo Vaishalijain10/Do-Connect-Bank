@@ -58,6 +58,8 @@ export async function verifyOtp(req, res) {
 // registerController -> First name, last name, Phone number, email, state, city, pinCode, Address, Password, Account number, DigitalPin, balance, Profile photo
 export async function registerController(req, res) {
   console.log("Received registration request");
+  console.log("Request Body:", req.body);
+  console.log("Uploaded File:", req.file); 
 
   const {
     firstName,
@@ -74,7 +76,7 @@ export async function registerController(req, res) {
   // console.log("user controller testing: ", req.body);
   try {
     console.log("Finding user by email...");
-    const user = await users.findOne({ email });
+    const user = await users.findOne({ email: req.body.email });
 
     if (!user) {
       console.log("User not found, cannot register.");
@@ -466,7 +468,9 @@ export async function forgotPasswordController(req, res) {
       message: "Password reset successful",
     });
   } catch (error) {
-    console.log(`userController : forgot password controller : error : ${error}`);
+    console.log(
+      `userController : forgot password controller : error : ${error}`
+    );
     res.send({
       status: false,
       message: "Something went wrong while resetting the password.",
