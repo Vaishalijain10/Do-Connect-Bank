@@ -10,11 +10,13 @@ export default function ViewUserDetails() {
   console.log("View user details", user);
   // view-user-details
   const [loading, setLoading] = useState(true);
+  // Check if the app is running in localhost or deployed environment
+  const isLocalhost = window.location.hostname === "localhost";
+
   const imgLink = user.userData?.profilePhoto
-    ? `${baseUrl}/${user.userData?.profilePhoto
-        .replace(/\\/g, "/")
-        .split("/")
-        .pop()}`
+    ? isLocalhost
+      ? `${baseUrl}/${user.userData?.profilePhoto.split("\\")[1]}` // Localhost (Windows-style paths)
+      : `${baseUrl}/${user.userData?.profilePhoto.replace(/\\/g, "/")}` // Deployed (Linux-style paths)
     : "";
 
   useEffect(() => {
