@@ -15,7 +15,17 @@ dotenv.config();
 
 // app.use(cors({ origin: `http://localhost:3000` }));
 
-app.use(cors({ origin: ["http://localhost:3000", process.env.FRONTEND_URL] }));
+// app.use(cors({ origin: ["http://localhost:3000", process.env.FRONTEND_URL] }));
+app.use(
+  cors({
+    origin: [
+      "http://localhost:3000", // For local testing
+      process.env.FRONTEND_URL, // Deployed frontend
+    ],
+    methods: ["GET", "POST", "PUT", "DELETE"], // Allowed HTTP methods
+    credentials: true, // Allow cookies if needed
+  })
+);
 
 dbConnection();
 
