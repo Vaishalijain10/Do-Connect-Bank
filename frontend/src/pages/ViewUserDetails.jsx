@@ -11,7 +11,7 @@ export default function ViewUserDetails() {
   // view-user-details
   const [loading, setLoading] = useState(true);
   const imgLink = user.userData?.profilePhoto
-    ? `${baseUrl}/${user.userData?.profilePhoto.split("\\")[1]}`
+    ? `${baseUrl}/${user.userData?.profilePhoto.replace(/\\/g, "/")}`
     : "";
 
   useEffect(() => {
