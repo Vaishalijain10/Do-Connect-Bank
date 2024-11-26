@@ -9,12 +9,13 @@ import cors from "cors";
 import path from "path";
 
 const __dirname = path.dirname(new URL(import.meta.url).pathname);
-0
+0;
 const app = express();
 dotenv.config();
 
 // app.use(cors({ origin: `http://localhost:3000` }));
-app.use(cors({ origin: process.env.FRONTEND_URL || "http://localhost:3000" }));
+
+app.use(cors({ origin: ["http://localhost:3000", process.env.FRONTEND_URL] }));
 
 dbConnection();
 
