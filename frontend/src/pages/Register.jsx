@@ -25,7 +25,7 @@ export default function Register() {
   });
   const [files, setFiles] = useState([]);
   const [errors, setErrors] = useState({});
-
+  console.log(errors);
   // Function to handle OTP request
   const handleGetOtp = async () => {
     if (!formData.email) {
@@ -130,7 +130,7 @@ export default function Register() {
     }
 
     console.log("handleSubmit: Validation passed.");
-    console.log("handleSubmit: formData =", formData);
+    console.log("handleSubmit: formData = ", formData);
 
     // Prepare FormData with form data and profile photo
     const formDataToSubmit = new FormData();

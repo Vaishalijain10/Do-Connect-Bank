@@ -22,7 +22,18 @@ console.log(`At user Route`);
 
 router.post("/request-otp", requestOtp);
 router.post("/verify-otp", verifyOtp);
-router.post("/register", upload.single("profilePhoto"), registerController);
+router.post(
+  "/register",
+  (req, res, next) => {
+    upload.single("profilePhoto")(req, res, (err) => {
+      if (err) {
+        return res.status(400).send({ status: false, message: err.message });
+      }
+      next();
+    });
+  },
+  registerController
+);
 
 router.post("/login", loginController);
 // @ redux route
