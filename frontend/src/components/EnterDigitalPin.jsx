@@ -45,7 +45,7 @@ const EnterDigitalPin = ({ onSubmit, onClose }) => {
   return (
     <div className="fixed inset-0 flex items-center text-center justify-center bg-black bg-opacity-80">
       <div className="bg-white p-6 rounded shadow-lg w-[500px]">
-        <h2 className="text-lg font-bold mb-4">Enter Digital Pin</h2>
+        <h2 className="text-2xl font-bold mb-4 text-black">Enter Digital Pin</h2>
         {/* digital pin */}
         <div className="flex justify-center gap-4 mb-4 relative">
           {pin.map((digit, index) => (
