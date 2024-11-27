@@ -379,8 +379,9 @@ export default function Register() {
             />
             <input
               type="file"
-              name="profilePic"
+              name="profilePhoto"
               className="w-full p-3 mb-4 border rounded"
+              accept="image/jpeg,image/png"
               required
               onChange={(e) => setFiles(Array.from(e.target.files))}
             />

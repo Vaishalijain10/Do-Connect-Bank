@@ -74,7 +74,9 @@ export async function verifyOtp(req, res) {
 export async function registerController(req, res) {
   console.log("Received registration request");
 
-  upload.single("profilePhoto")(req, res, async (err) => {
+  // Manually invoke multer's file upload handler
+  const multerUpload = upload.single("profilePhoto");
+  multerUpload(req, res, async (err) => {
     if (err) {
       console.error("Error uploading file:", err.message);
       return res.send({ status: false, message: err.message });
@@ -97,12 +99,12 @@ export async function registerController(req, res) {
     } = req.body;
 
     try {
-      console.log("Finding user by email...");
-      const user = await users.findOne({ email });
+      console.log("Checking if user already exists...");
+      const existingUser = await users.findOne({ email });
 
-      if (!user) {
-        console.log("User not found, cannot register.");
-        return res.send({ status: false, message: "User not found." });
+      if (existingUser) {
+        console.log("User already exists.");
+        return res.send({ status: false, message: "User already exists." });
       }
 
       console.log("Hashing password and digital pin...");
@@ -112,33 +114,29 @@ export async function registerController(req, res) {
       console.log("Generating account number...");
       const accountNumber = await generateUniqueAccountNumber();
 
-      console.log("Saving user...");
-      user.firstName = firstName;
-      user.lastName = lastName;
-      user.phoneNumber = phoneNumber;
-      user.state = state;
-      user.city = city;
-      user.pinCode = pinCode;
-      user.address = address;
-      user.password = hashedPassword;
-      user.digitalPin = hashedDigitalPin;
-      user.accountNumber = accountNumber;
-      user.balance = 0; // Initial balance
-      user.tempOtp = null; // Clear OTP after registration
+      console.log("Creating new user...");
+      const newUser = new users({
+        firstName,
+        lastName,
+        email,
+        phoneNumber,
+        state,
+        city,
+        pinCode,
+        address,
+        password: hashedPassword,
+        digitalPin: hashedDigitalPin,
+        accountNumber,
+        balance: 0, // Initial balance
+        profilePhoto: req.file ? req.file.filename : null, // Save photo path if uploaded
+      });
 
-      // Check if a profile photo is uploaded and save its path
-      if (req.file) {
-        user.profilePhoto = req.file.filename;
-      }
-
-      await user.save();
+      await newUser.save();
       console.log("User registered successfully.");
       res.send({ status: true, message: "User registered successfully." });
     } catch (error) {
       console.error("Error during registration:", error);
-      res
-        .status(500)
-        .send({ status: false, message: "Error during registration." });
+      res.send({ status: false, message: "Error during registration." });
     }
   });
 }
