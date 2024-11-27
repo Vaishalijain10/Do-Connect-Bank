@@ -1,8 +1,9 @@
 import React, { useState } from "react";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { toast } from "react-toastify";
 import { useNavigate } from "react-router-dom";
 import { editUserDetails } from "../api/UserFunction";
+import { fetchUserDetails } from "../redux/slices/userSlice";
 
 export default function EditUserDetails() {
   // Access the user data from the Redux store
@@ -21,7 +22,7 @@ export default function EditUserDetails() {
     accountNumber: user.accountNumber || "",
   });
   const [loading, setLoading] = useState(false);
-
+  const dispatch = useDispatch();
   // Handle input changes
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -47,6 +48,7 @@ export default function EditUserDetails() {
       if (response.status) {
         console.log("handleSubmit: User details updated successfully.");
         toast.success(response.message || "User details updated successfully!");
+        dispatch(fetchUserDetails());
         Navigate("/ViewUserDetails");
       } else {
         console.error("handleSubmit: Update failed:", response.message);

@@ -34,10 +34,21 @@ export default function Register() {
       return;
     }
 
+    if (!formData.phoneNumber) {
+      setErrors((prev) => ({
+        ...prev,
+        phoneNumber: "Phone Number is required",
+      }));
+      toast.error("Phone Number is required!");
+      return;
+    }
     try {
       setLoading(true); // Start loading
       // Call the helper function to request OTP
-      const response = await requestOtp(formData.email);
+      const response = await requestOtp({
+        email: formData.email,
+        phoneNumber: formData.phoneNumber,
+      });
 
       if (response.status) {
         // Update UI state and notify the user

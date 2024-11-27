@@ -19,7 +19,7 @@ export const LoginUser = async (FormData) => {
 
 // @ Register function
 // get Otp
-export const requestOtp = async (email) => {
+export const requestOtp = async (obj) => {
   try {
     console.log("Initiating OTP request...");
 
@@ -28,7 +28,7 @@ export const requestOtp = async (email) => {
       headers: {
         "Content-Type": "application/json",
       },
-      body: JSON.stringify({ email }),
+      body: JSON.stringify(obj),
     });
 
     console.log(`requestOtp: response: ${response}`);
@@ -230,4 +230,3 @@ export const editUserDetails = async (userId, formData) => {
 };
 
 // @ view-user-details - used redux!
-

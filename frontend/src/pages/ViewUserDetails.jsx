@@ -15,12 +15,11 @@ export default function ViewUserDetails() {
 
   const imgLink = user.userData?.profilePhoto
     ? isLocalhost
-      ? `${baseUrl}/${user.userData?.profilePhoto.split("\\")[1]}` // Localhost (Windows-style paths)
-      : `${baseUrl}/${user.userData?.profilePhoto.replace(/\\/g, "/")}` // Deployed (Linux-style paths)
+      ? `${baseUrl}/${user.userData?.profilePhoto}` // Localhost (Windows-style paths)
+      : `${baseUrl}/${user.userData?.profilePhoto}` // Deployed (Linux-style paths)
     : "";
 
   useEffect(() => {
-    // Check if user data is loaded
     if (user?.userData) {
       setLoading(false);
     }

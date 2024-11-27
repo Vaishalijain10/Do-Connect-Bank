@@ -13,17 +13,33 @@ import { upload } from "../library/Multer.js";
 
 // Request OTP Controller
 export async function requestOtp(req, res) {
-  const { email } = req.body;
+  const { email, phoneNumber } = req.body;
   console.log(`backend : user Controller : request-Otp`);
   try {
     const otp = generateOTP();
     const otpExpiration = Date.now() + 10 * 60 * 1000;
 
-    await users.updateOne(
-      { email: email },
-      { tempOtp: otp, otpExpiration },
-      { upsert: true }
-    );
+    const already = await users.findOne({
+      $or: [{ email: email }, { phoneNumber: phoneNumber }],
+    });
+
+    if (already) {
+      console.log("THIS EMAIL OR CONTACT ALREADY PRESENT");
+      return res.send({
+        status: false,
+        message: "Email or Phone Number already registered",
+      });
+    }
+    console.log("New user");
+    const newUser = await users({
+      email: email,
+      phoneNumber: phoneNumber,
+      tempOtp: otp,
+      otpExpiration,
+    });
+
+    console.log("process");
+    await newUser.save();
 
     await sendOtpEmail(email, otp);
     res.send({ status: true, message: "OTP sent to email." });
@@ -112,7 +128,7 @@ export async function registerController(req, res) {
 
       // Check if a profile photo is uploaded and save its path
       if (req.file) {
-        user.profilePhoto = req.file.path;
+        user.profilePhoto = req.file.filename;
       }
 
       await user.save();
