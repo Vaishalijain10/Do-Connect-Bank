@@ -12,8 +12,7 @@ export default function ViewUserDetails() {
   // view-user-details
   const [loading, setLoading] = useState(true);
 
-  const imgLink =
-    `${baseUrl}/${user.userData?.profilePhoto}` || `${defaultImage}`;
+  const imgLink = `${baseUrl}/${user.userData?.profilePhoto}` || defaultImage;
 
   useEffect(() => {
     if (user?.userData) {
