@@ -5,6 +5,7 @@ import { toast } from "react-toastify";
 import { useDispatch, useSelector } from "react-redux";
 import { setAuth } from "../redux/slices/userSlice";
 import { Navigate } from "react-router-dom";
+import { AiTwotoneEye, AiTwotoneEyeInvisible } from "react-icons/ai";
 
 export default function Login() {
   const navigate = useNavigate();
@@ -15,7 +16,7 @@ export default function Login() {
     email: "",
     password: "",
   });
-
+  const [passwordVisible, setPasswordVisible] = useState(false); // Toggle password visibility
   // Loading state for button
   const [loading, setLoading] = useState(false);
 
@@ -84,18 +85,31 @@ export default function Login() {
         />
 
         {/* Password Field */}
-        <input
-          type="password"
-          name="password"
-          value={loginFormData.password}
-          onChange={handleLoginChange}
-          placeholder="Password"
-          className="w-full p-2 mb-4 border rounded text-sm sm:text-base"
-          required
-        />
+        <div className="relative w-full mb-4">
+          <input
+            type={passwordVisible ? "text" : "password"}
+            name="password"
+            value={loginFormData.password}
+            onChange={handleLoginChange}
+            placeholder="Password"
+            className="w-full p-2 border rounded text-sm sm:text-base"
+            required
+          />
+          <button
+            type="button"
+            onClick={() => setPasswordVisible(!passwordVisible)}
+            className="absolute top-1/2 right-3 transform -translate-y-1/2 text-gray-500"
+          >
+            {passwordVisible ? (
+              <AiTwotoneEyeInvisible size={20} />
+            ) : (
+              <AiTwotoneEye size={20} />
+            )}
+          </button>
+        </div>
 
-         {/* Login Button */}
-         <button
+        {/* Login Button */}
+        <button
           type="submit"
           disabled={loading}
           className={`${

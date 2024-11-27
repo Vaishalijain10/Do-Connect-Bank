@@ -7,6 +7,7 @@ import {
   verifyForgotPasswordOtp,
 } from "../api/UserFunction";
 import { useSelector } from "react-redux";
+import { AiTwotoneEye, AiTwotoneEyeInvisible } from "react-icons/ai";
 
 export default function ForgotPassword() {
   // State Variables
@@ -20,8 +21,10 @@ export default function ForgotPassword() {
     useState(false);
   const [forgotPasswordOtpVerified, setForgotPasswordOtpVerified] =
     useState(false);
-  const Navigate = useNavigate();
+  const [passwordVisible, setPasswordVisible] = useState(false); // New password visibility state
+  const [confirmPasswordVisible, setConfirmPasswordVisible] = useState(false); // Confirm password visibility state
 
+  const Navigate = useNavigate();
   const user = useSelector((state) => state.user);
 
   // Handlers for form data
@@ -168,9 +171,9 @@ export default function ForgotPassword() {
         {/* New Password Fields */}
         {forgotPasswordOtpVerified && (
           <>
-            <div className="w-full mb-4">
+            <div className="relative w-full mb-4">
               <input
-                type="password"
+                type={passwordVisible ? "text" : "password"}
                 name="password"
                 placeholder="Enter New Password"
                 className="w-full p-2 border rounded"
@@ -178,10 +181,21 @@ export default function ForgotPassword() {
                 onChange={handleChange}
                 required
               />
+              <button
+                type="button"
+                onClick={() => setPasswordVisible(!passwordVisible)}
+                className="absolute right-2 top-1/2 transform -translate-y-1/2 text-gray-500"
+              >
+                {passwordVisible ? (
+                  <AiTwotoneEyeInvisible size={20} />
+                ) : (
+                  <AiTwotoneEye size={20} />
+                )}
+              </button>
             </div>
-            <div className="w-full mb-4">
+            <div className="relative w-full mb-4">
               <input
-                type="password"
+                type={confirmPasswordVisible ? "text" : "password"}
                 name="confirmPassword"
                 placeholder="Confirm New Password"
                 className="w-full p-2 border rounded"
@@ -189,6 +203,19 @@ export default function ForgotPassword() {
                 onChange={handleChange}
                 required
               />
+              <button
+                type="button"
+                onClick={() =>
+                  setConfirmPasswordVisible(!confirmPasswordVisible)
+                }
+                className="absolute right-2 top-1/2 transform -translate-y-1/2 text-gray-500"
+              >
+                {confirmPasswordVisible ? (
+                  <AiTwotoneEyeInvisible size={20} />
+                ) : (
+                  <AiTwotoneEye size={20} />
+                )}
+              </button>
             </div>
           </>
         )}

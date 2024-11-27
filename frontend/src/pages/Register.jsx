@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import { registerUser, requestOtp, verifyOtp } from "../api/UserFunction";
+import { AiTwotoneEye, AiTwotoneEyeInvisible } from "react-icons/ai";
 
 export default function Register() {
   const [step, setStep] = useState(1);
@@ -9,6 +10,9 @@ export default function Register() {
   const [otpVerified, setOtpVerified] = useState(false);
   const [otp, setOtp] = useState("");
   const [loading, setLoading] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
+  const [showPin, setShowPin] = useState(false);
+
   const Navigate = useNavigate();
   const [formData, setFormData] = useState({
     firstName: "",
@@ -359,29 +363,88 @@ export default function Register() {
 
         {step === 3 && (
           <>
-            <input
-              type="password"
-              name="password"
-              value={formData.password}
-              onChange={handleChange}
-              placeholder="Password"
-              className="w-full p-2 mb-4 border rounded"
-              required
-            />
-            <input
-              type="password"
-              name="digitalPin"
-              value={formData.digitalPin}
-              onChange={handleChange}
-              placeholder="Digital Pin"
-              className="w-full p-2 mb-4 border rounded"
-              required
-            />
+            <div className="relative w-full mb-4">
+              <input
+                type={showPassword ? "text" : "password"} // Toggle between text and password
+                name="password"
+                value={formData.password}
+                onChange={handleChange}
+                placeholder="Password"
+                className="w-full p-2 border rounded"
+                required
+              />
+              <button
+                type="button"
+                onClick={() => setShowPassword((prev) => !prev)} // Toggle visibility
+                className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-600"
+              >
+                {showPassword ? <AiTwotoneEyeInvisible /> : <AiTwotoneEye />}
+              </button>
+            </div>
+
+            {/* 4-Digit PIN Input with Toggle Visibility */}
+            <div>
+              <div className="flex justify-start gap-4 mb-4">
+                <label
+                  htmlFor="digitalPin"
+                  className="block text-lg font-medium text-gray-600 mb-2 mt-3"
+                >
+                  Set Your 4-Digit PIN
+                </label>
+                {Array(4)
+                  .fill("")
+                  .map((_, index) => (
+                    <div key={index} className="relative">
+                      <input
+                        type={showPin ? "text" : "password"}
+                        maxLength={1}
+                        value={formData.digitalPin[index] || ""}
+                        onChange={(e) => {
+                          const value = e.target.value;
+                          if (!/^\d*$/.test(value)) return; // Allow only numbers
+
+                          const updatedPin = formData.digitalPin.split("");
+                          updatedPin[index] = value;
+
+                          setFormData((prev) => ({
+                            ...prev,
+                            digitalPin: updatedPin.join(""),
+                          }));
+
+                          // Move to the next input box automatically
+                          if (value && index < 3) {
+                            const nextInput = document.getElementById(
+                              `pin-input-${index + 1}`
+                            );
+                            nextInput?.focus();
+                          }
+                        }}
+                        className="w-12 h-12 text-center text-lg border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
+                        id={`pin-input-${index}`}
+                        required
+                      />
+                      {index === 3 && (
+                        <span
+                          className="absolute -right-8 top-1/2 transform -translate-y-1/2 cursor-pointer text-gray-500"
+                          onClick={() => setShowPin((prev) => !prev)}
+                        >
+                          {showPin ? (
+                            <AiTwotoneEyeInvisible size={20} />
+                          ) : (
+                            <AiTwotoneEye size={20} />
+                          )}
+                        </span>
+                      )}
+                    </div>
+                  ))}
+              </div>
+            </div>
+
             <input
               type="file"
               name="profilePhoto"
               className="w-full p-3 mb-4 border rounded"
-              accept="image/jpeg,image/png"  
+              accept="image/jpeg,image/png"
               onChange={(e) => setFiles(Array.from(e.target.files))}
             />
           </>

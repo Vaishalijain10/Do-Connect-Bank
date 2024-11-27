@@ -3,28 +3,27 @@ import { Link, useNavigate } from "react-router-dom";
 import { useSelector } from "react-redux";
 import { toast } from "react-toastify";
 import { resetPassword } from "../api/UserFunction";
-export default function PasswordReset() {
-  // Access user data and dispatch function from Redux
-  const user = useSelector((state) => state.user);
-  console.log("Reset password: ", user);
+import { AiTwotoneEye, AiTwotoneEyeInvisible } from "react-icons/ai";
 
+export default function PasswordReset() {
+  const user = useSelector((state) => state.user);
   const navigate = useNavigate();
 
-  // Local state to handle form inputs
   const [currentPassword, setCurrentPassword] = useState("");
   const [newPassword, setNewPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [errorMessage, setErrorMessage] = useState("");
   const [successMessage, setSuccessMessage] = useState("");
   const [loading, setLoading] = useState(false);
+  const [showCurrentPassword, setShowCurrentPassword] = useState(false);
+  const [showNewPassword, setShowNewPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
-  // Handler for form submission
   const handlePasswordReset = async (e) => {
-    e.preventDefault(); // Prevent default form submission behavior
+    e.preventDefault();
     setErrorMessage("");
     setSuccessMessage("");
 
-    // Basic input validation
     if (!currentPassword || !newPassword || !confirmPassword) {
       const error = "All fields are required.";
       toast.error(error);
@@ -38,11 +37,9 @@ export default function PasswordReset() {
       setErrorMessage(error);
       return;
     }
+
     setLoading(true);
     try {
-      console.log("handlePasswordReset: Sending request to reset password...");
-
-      // Call the helper function to reset the password
       const response = await resetPassword(
         user.userData?._id,
         currentPassword,
@@ -67,19 +64,17 @@ export default function PasswordReset() {
       setErrorMessage(errorMessage);
       setSuccessMessage("");
     } finally {
-      setLoading(false); // Disable loading state
+      setLoading(false);
     }
   };
 
   return (
     <div className="h-[79.91vh] flex items-center justify-center bg-gray-100 overflow-y-auto">
       <div className="bg-white p-4 sm:p-6 md:p-8 rounded shadow-md w-full max-w-xs sm:max-w-sm md:max-w-md lg:max-w-lg xl:max-w-xl">
-        {/* Header */}
         <h1 className="bg-navy text-white w-full p-2 mb-2 uppercase text-center text-sm sm:text-base md:text-lg lg:text-xl">
           Reset Password
         </h1>
 
-        {/* Digital Pin Display */}
         <div className="mb-4">
           <h2 className="text-base sm:text-lg md:text-xl font-bold mb-4 text-center">
             Your Current Password
@@ -89,13 +84,11 @@ export default function PasswordReset() {
           </div>
         </div>
 
-        {/* Reset Digital Pin Section */}
         <div className="space-y-4">
-          <h2 className="text-base sm:text-lg md:text-xl font-semibold mb-4 text-center ">
+          <h2 className="text-base sm:text-lg md:text-xl font-semibold mb-4 text-center">
             Reset Your Password
           </h2>
 
-          {/* Display error or success messages */}
           {errorMessage && (
             <div className="text-red-500 text-sm text-center mb-4">
               {errorMessage}
@@ -107,51 +100,84 @@ export default function PasswordReset() {
             </div>
           )}
 
-          <div className="space-y-2">
-            {/* Form for resetting the password */}
-            <form onSubmit={handlePasswordReset}>
-              {/* Current Password Input */}
+          <form onSubmit={handlePasswordReset}>
+            {/* Current Password Input with Eye Icon */}
+            <div className="relative mb-4">
               <input
-                type="password"
+                type={showCurrentPassword ? "text" : "password"}
                 placeholder="Enter Current Password"
                 value={currentPassword}
                 onChange={(e) => setCurrentPassword(e.target.value)}
-                className="w-full p-2 mb-4 border rounded text-sm sm:text-base"
+                className="w-full p-2 border rounded text-sm sm:text-base"
                 required
               />
+              <span
+                className="absolute top-1/2 pb-0 right-3 transform -translate-y-1/2 cursor-pointer text-gray-500"
+                onClick={() => setShowCurrentPassword((prev) => !prev)}
+              >
+                {showCurrentPassword ? (
+                  <AiTwotoneEyeInvisible size={20} />
+                ) : (
+                  <AiTwotoneEye size={20} />
+                )}
+              </span>
+            </div>
 
-              {/* New Password Input */}
+            {/* New Password Input with Eye Icon */}
+            <div className="relative mb-4">
               <input
-                type="password"
+                type={showNewPassword ? "text" : "password"}
                 placeholder="Enter New Password"
                 value={newPassword}
                 onChange={(e) => setNewPassword(e.target.value)}
-                className="w-full p-2 mb-4 border rounded text-sm sm:text-base"
+                className="w-full p-2 border rounded text-sm sm:text-base"
                 required
               />
+              <span
+                className="absolute top-1/2 pb-0 right-3 transform -translate-y-1/2 cursor-pointer text-gray-500"
+                onClick={() => setShowNewPassword((prev) => !prev)}
+              >
+                {showNewPassword ? (
+                  <AiTwotoneEyeInvisible size={20} />
+                ) : (
+                  <AiTwotoneEye size={20} />
+                )}
+              </span>
+            </div>
 
-              {/* Confirm New Password Input */}
+            {/* Confirm New Password Input with Eye Icon */}
+            <div className="relative mb-4">
               <input
-                type="password"
+                type={showConfirmPassword ? "text" : "password"}
                 placeholder="Confirm New Password"
                 value={confirmPassword}
                 onChange={(e) => setConfirmPassword(e.target.value)}
-                className="w-full p-2 mb-4 border rounded text-sm sm:text-base"
+                className="w-full p-2 mb-2 border rounded text-sm sm:text-base"
                 required
               />
-
-              {/* Submit Button */}
-              <button
-                type="submit"
-                disabled={loading} // Disable button when loading
-                className={`${
-                  loading ? "bg-gray-400 cursor-not-allowed" : "bg-navy"
-                } text-white w-full p-2 rounded text-sm sm:text-base`}
+              <span
+                className="absolute top-1/2 pb-2 right-3 transform -translate-y-1/2 cursor-pointer text-gray-500"
+                onClick={() => setShowConfirmPassword((prev) => !prev)}
               >
-                {loading ? "Resetting..." : "Reset Password"}
-              </button>
-            </form>
-          </div>
+                {showConfirmPassword ? (
+                  <AiTwotoneEyeInvisible size={20} />
+                ) : (
+                  <AiTwotoneEye size={20} />
+                )}
+              </span>
+            </div>
+
+            {/* Submit Button */}
+            <button
+              type="submit"
+              disabled={loading}
+              className={`${
+                loading ? "bg-gray-400 cursor-not-allowed" : "bg-navy"
+              } text-white w-full p-2 rounded text-sm sm:text-base`}
+            >
+              {loading ? "Resetting..." : "Reset Password"}
+            </button>
+          </form>
 
           {/* Back Link */}
           <div className="text-center mt-4 space-y-2">

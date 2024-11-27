@@ -3,6 +3,7 @@ import { useSelector } from "react-redux";
 import { Link, useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import { resetDigitalPin } from "../api/UserFunction";
+import { AiTwotoneEye, AiTwotoneEyeInvisible } from "react-icons/ai";
 
 export default function DigitalPin() {
   // Access user data from Redux
@@ -11,10 +12,14 @@ export default function DigitalPin() {
 
   const [resetMethod, setResetMethod] = useState("pin");
   const [currentCredential, setCurrentCredential] = useState("");
-  const [newPin, setNewPin] = useState("");
-  const [confirmPin, setConfirmPin] = useState("");
+  const [newPin, setNewPin] = useState(["", "", "", ""]);
+  const [confirmPin, setConfirmPin] = useState(["", "", "", ""]);
   const [loading, setLoading] = useState(false); // Loading state for button
   const [message, setMessage] = useState(""); // Message for success/error feedback
+  const [showPassword, setShowPassword] = useState(false);
+  const [showCurrentPin, setShowCurrentPin] = useState(false);
+  const [showNewPin, setShowNewPin] = useState(false);
+  const [showConfirmPin, setShowConfirmPin] = useState(false);
 
   // Function to handle form submission
   const handleResetPin = async (e) => {
@@ -28,7 +33,7 @@ export default function DigitalPin() {
     }
 
     // Basic validation
-    if (newPin !== confirmPin) {
+    if (newPin.join("") !== confirmPin.join("")) {
       const error = "New Pin and Confirm Pin do not match.";
       toast.error(error);
       setMessage(error);
@@ -46,7 +51,7 @@ export default function DigitalPin() {
         user.userData?._id,
         resetMethod,
         currentCredential,
-        newPin
+        newPin.join("")
       );
 
       if (response.status) {
@@ -54,7 +59,7 @@ export default function DigitalPin() {
         setMessage(response.message || "Digital Pin reset successfully!");
         setTimeout(() => {
           navigate("/");
-        }, 2000);
+        }, 1000);
       } else {
         const errorMessage = response.message || "Failed to reset digital pin.";
         toast.error(errorMessage);
@@ -67,6 +72,34 @@ export default function DigitalPin() {
       setMessage(errorMessage);
     } finally {
       setLoading(false);
+    }
+  };
+
+  // Handle new pin input change
+  const handleNewInputChange = (value, index) => {
+    if (value.length > 1) return; // Prevent entering more than one digit
+    const updatedPin = [...newPin];
+    updatedPin[index] = value;
+    setNewPin(updatedPin);
+
+    // Automatically focus the next input
+    if (value !== "" && index < 3) {
+      const nextInput = document.getElementById(`newPin-${index + 1}`);
+      nextInput?.focus();
+    }
+  };
+
+  // Handle confirm pin input change
+  const handleConfirmInputChange = (value, index) => {
+    if (value.length > 1) return; // Prevent entering more than one digit
+    const updatedPin = [...confirmPin];
+    updatedPin[index] = value;
+    setConfirmPin(updatedPin);
+
+    // Automatically focus the next input
+    if (value !== "" && index < 3) {
+      const nextInput = document.getElementById(`confirmPin-${index + 1}`);
+      nextInput?.focus();
     }
   };
 
@@ -90,7 +123,7 @@ export default function DigitalPin() {
 
         {/* Reset Digital Pin Section */}
         <div className="space-y-4">
-          <h2 className="text-base sm:text-lg md:text-xl font-semibold mb-4 text-center ">
+          <h2 className="text-base sm:text-lg md:text-xl font-semibold mb-4 text-center">
             Reset Your Digital Pin
           </h2>
 
@@ -122,47 +155,152 @@ export default function DigitalPin() {
 
           {/* Conditional Inputs Based on Selected Method */}
           <form onSubmit={handleResetPin} className="space-y-2">
+            {/* current pin */}
             {resetMethod === "pin" && (
-              <input
-                type="password"
-                placeholder="Enter Current Pin"
-                value={currentCredential}
-                onChange={(e) => setCurrentCredential(e.target.value)}
-                className="w-full p-2 mb-4 border rounded text-sm sm:text-base"
-                required
-              />
+              <div className="mb-4 flex gap-4">
+                <label className="block text-sm sm:text-base mb-2 mt-2 text-gray-700">
+                  Enter Current Pin
+                </label>
+                <div className="flex justify-center gap-2">
+                  {Array(4)
+                    .fill("")
+                    .map((_, index) => (
+                      <div key={index} className="relative">
+                        <input
+                          type={showCurrentPin ? "text" : "password"}
+                          value={currentCredential[index] || ""}
+                          onChange={(e) => {
+                            const value = e.target.value;
+                            setCurrentCredential((prev) => {
+                              const newCredential = [...prev];
+                              newCredential[index] = value;
+                              return newCredential.join("");
+                            });
+
+                            // Move to the next input box automatically
+                            if (value && index < 3) {
+                              const nextInput = document.getElementById(
+                                `pin-input-${index + 1}`
+                              );
+                              nextInput?.focus();
+                            }
+                          }}
+                          id={`pin-input-${index}`}
+                          className="w-12 h-12 text-center text-lg border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
+                        />
+                        {index === 3 && (
+                          <span
+                            className="absolute ml-5 top-1/2 transform -translate-y-1/2 cursor-pointer text-gray-500"
+                            onClick={() => setShowCurrentPin((prev) => !prev)}
+                          >
+                            {showCurrentPin ? (
+                              <AiTwotoneEyeInvisible size={20} />
+                            ) : (
+                              <AiTwotoneEye size={20} />
+                            )}
+                          </span>
+                        )}
+                      </div>
+                    ))}
+                </div>
+              </div>
             )}
 
+            {/* current password */}
             {resetMethod === "password" && (
-              <input
-                type="password"
-                placeholder="Enter Current Password"
-                value={currentCredential}
-                onChange={(e) => setCurrentCredential(e.target.value)}
-                className="w-full p-2 mb-4 border rounded text-sm sm:text-base"
-                required
-              />
+              <div className="mb-4">
+                <div className="relative">
+                  <input
+                    type={showPassword ? "text" : "password"}
+                    placeholder="Enter Current Password"
+                    value={currentCredential}
+                    onChange={(e) => setCurrentCredential(e.target.value)}
+                    className="w-full p-2 border rounded text-sm sm:text-base"
+                    required
+                  />
+                  <span
+                    className="absolute right-4 top-1/2 transform -translate-y-1/2 cursor-pointer text-gray-500"
+                    onClick={() => setShowPassword((prev) => !prev)}
+                  >
+                    {showPassword ? (
+                      <AiTwotoneEyeInvisible size={20} />
+                    ) : (
+                      <AiTwotoneEye size={20} />
+                    )}
+                  </span>
+                </div>
+              </div>
             )}
 
             {/* New Pin Input */}
-            <input
-              type="password"
-              placeholder="Enter New Pin"
-              value={newPin}
-              onChange={(e) => setNewPin(e.target.value)}
-              className="w-full p-2 mb-4 border rounded text-sm sm:text-base"
-              required
-            />
+            <div className="mb-4 flex gap-4">
+              <label className="block text-sm sm:text-base mb-2 mt-2 text-gray-700">
+                Enter New Pin
+              </label>
+              <div className="flex justify-center gap-2 ml-5">
+                {newPin.map((digit, index) => (
+                  <div key={index} className="relative">
+                    <input
+                      id={`newPin-${index}`}
+                      type={showNewPin ? "text" : "password"}
+                      value={digit}
+                      maxLength={1}
+                      onChange={(e) =>
+                        handleNewInputChange(e.target.value, index)
+                      }
+                      className="w-12 h-12 text-center text-lg border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    />
+                    {index === 3 && (
+                      <span
+                        className="absolute ml-5 top-1/2 transform -translate-y-1/2 cursor-pointer text-gray-500"
+                        onClick={() => setShowNewPin((prev) => !prev)}
+                      >
+                        {showNewPin ? (
+                          <AiTwotoneEyeInvisible size={20} />
+                        ) : (
+                          <AiTwotoneEye size={20} />
+                        )}
+                      </span>
+                    )}
+                  </div>
+                ))}
+              </div>
+            </div>
 
             {/* Confirm New Pin Input */}
-            <input
-              type="password"
-              placeholder="Confirm New Pin"
-              value={confirmPin}
-              onChange={(e) => setConfirmPin(e.target.value)}
-              className="w-full p-2 mb-4 border rounded text-sm sm:text-base"
-              required
-            />
+            <div className="mb-4 flex gap-4">
+              <label className="block text-sm sm:text-base mb-2 mt-2 text-gray-700">
+                Confirm New Pin
+              </label>
+              <div className="flex justify-center gap-2 ">
+                {confirmPin.map((digit, index) => (
+                  <div key={index} className="relative">
+                    <input
+                      id={`confirmPin-${index}`}
+                      type={showConfirmPin ? "text" : "password"}
+                      value={digit}
+                      maxLength={1}
+                      onChange={(e) =>
+                        handleConfirmInputChange(e.target.value, index)
+                      }
+                      className="w-12 h-12 text-center text-lg border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    />
+                    {index === 3 && (
+                      <span
+                        className="absolute ml-5 top-1/2 transform -translate-y-1/2 cursor-pointer text-gray-500"
+                        onClick={() => setShowConfirmPin((prev) => !prev)}
+                      >
+                        {showConfirmPin ? (
+                          <AiTwotoneEyeInvisible size={20} />
+                        ) : (
+                          <AiTwotoneEye size={20} />
+                        )}
+                      </span>
+                    )}
+                  </div>
+                ))}
+              </div>
+            </div>
 
             {/* Reset Button */}
             <button
