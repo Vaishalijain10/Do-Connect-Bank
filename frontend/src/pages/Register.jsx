@@ -381,8 +381,7 @@ export default function Register() {
               type="file"
               name="profilePhoto"
               className="w-full p-3 mb-4 border rounded"
-              accept="image/jpeg,image/png"
-              required
+              accept="image/jpeg,image/png"  
               onChange={(e) => setFiles(Array.from(e.target.files))}
             />
           </>

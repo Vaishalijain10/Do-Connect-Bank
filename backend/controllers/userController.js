@@ -79,7 +79,6 @@ export async function registerController(req, res) {
   multerUpload(req, res, async (err) => {
     if (err) {
       console.error("Error uploading file:", err.message);
-      return res.send({ status: false, message: err.message });
     }
 
     console.log("Request Body:", req.body);
