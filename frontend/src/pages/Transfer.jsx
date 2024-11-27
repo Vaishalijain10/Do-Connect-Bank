@@ -38,6 +38,11 @@ export default function Transfer() {
       toast.info("Please enter a valid recipient email.");
       return;
     }
+    if (recipientEmail === user.userData.email) {
+      setMessage("Self transfer is not allowed.");
+      toast.info("Self transfer is not allowed.");
+      return;
+    }
 
     setLoading(true); // Show loading indicator during the transfer process
     try {
