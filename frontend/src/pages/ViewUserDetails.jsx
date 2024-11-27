@@ -13,7 +13,7 @@ export default function ViewUserDetails() {
   const [loading, setLoading] = useState(true);
   const isLocalHost = window.location.hostname === "localhost";
   const imgLink = isLocalHost
-    ? `${baseUrl}/${user?.userData?.profilePhoto}`
+    ? `${baseUrl}/${user?.userData?.profilePhoto || defaultImage}`
     : defaultImage;
 
   useEffect(() => {
