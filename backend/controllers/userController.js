@@ -98,12 +98,12 @@ export async function registerController(req, res) {
     } = req.body;
 
     try {
-      console.log("Checking if user already exists...");
-      const existingUser = await users.findOne({ email });
+      console.log("Finding user by email...");
+      const user = await users.findOne({ email });
 
-      if (existingUser) {
-        console.log("User already exists.");
-        return res.send({ status: false, message: "User already exists." });
+      if (!user) {
+        console.log("User not found, cannot register.");
+        return res.send({ status: false, message: "User not found." });
       }
 
       console.log("Hashing password and digital pin...");
@@ -111,26 +111,27 @@ export async function registerController(req, res) {
       const hashedDigitalPin = await bcrypt.hash(digitalPin, 10);
 
       console.log("Generating account number...");
-      const accountNumber = await generateUniqueAccountNumber();
+      const accountNumber = await generateUniqueAccountNumber(); // Ensure this is awaited
 
-      console.log("Creating new user...");
-      const newUser = new users({
-        firstName,
-        lastName,
-        email,
-        phoneNumber,
-        state,
-        city,
-        pinCode,
-        address,
-        password: hashedPassword,
-        digitalPin: hashedDigitalPin,
-        accountNumber,
-        balance: 0, // Initial balance
-        profilePhoto: req.file ? req.file.filename : null, // Save photo path if uploaded
-      });
+      console.log("Saving user...");
+      user.firstName = firstName;
+      user.lastName = lastName;
+      user.phoneNumber = phoneNumber;
+      user.state = state;
+      user.city = city;
+      user.pinCode = pinCode;
+      user.address = address;
+      user.password = hashedPassword;
+      user.digitalPin = hashedDigitalPin;
+      user.accountNumber = accountNumber; // Save account number
+      user.balance = 0; // Initial balance
+      user.tempOtp = null; // Clear OTP after registration
+      // Check if a profile photo is uploaded and save its path
+      if (req.file) {
+        user.profilePhoto = req.file.filename;
+      }
 
-      await newUser.save();
+      await user.save();
       console.log("User registered successfully.");
       res.send({ status: true, message: "User registered successfully." });
     } catch (error) {
