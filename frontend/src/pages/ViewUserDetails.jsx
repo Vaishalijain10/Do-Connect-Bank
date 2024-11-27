@@ -10,14 +10,8 @@ export default function ViewUserDetails() {
   console.log("View user details", user);
   // view-user-details
   const [loading, setLoading] = useState(true);
-  // Check if the app is running in localhost or deployed environment
-  const isLocalhost = window.location.hostname === "localhost";
 
-  const imgLink = user.userData?.profilePhoto
-    ? isLocalhost
-      ? `${baseUrl}/${user.userData?.profilePhoto}` // Localhost (Windows-style paths)
-      : `${baseUrl}/${user.userData?.profilePhoto}` // Deployed (Linux-style paths)
-    : "";
+  const imgLink = `${baseUrl}/${user.userData?.profilePhoto}`;
 
   useEffect(() => {
     if (user?.userData) {

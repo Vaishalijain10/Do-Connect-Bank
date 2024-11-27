@@ -85,12 +85,12 @@ export const verifyOtp = async (email, otp) => {
 export const registerUser = async (formDataToSubmit) => {
   try {
     console.log("registerUser: Sending registration data to backend...");
-
+    console.log("testing", userUrl);
     const response = await axios.post(`${userUrl}/register`, formDataToSubmit);
 
     console.log("registerUser: Response received:", response.data);
 
-    return response.data; // Return the response for further processing
+    return response.data;
   } catch (error) {
     console.error("registerUser: Error during registration:", error);
     return {
