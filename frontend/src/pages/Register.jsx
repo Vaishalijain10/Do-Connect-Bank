@@ -26,6 +26,7 @@ export default function Register() {
     password: "",
     digitalPin: "",
     tempOtp: "",
+    profilePhoto: "",
   });
   const [files, setFiles] = useState([]);
   const [errors, setErrors] = useState({});
@@ -130,6 +131,38 @@ export default function Register() {
     }
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
+  };
+
+  // Image upload logic
+  const uploadImage = async (file) => {
+    setLoading(true);
+    try {
+      const data = new FormData();
+      data.append("file", file);
+      data.append("upload_preset", "Do-Co Bank");
+      data.append("cloud_name", "vaishalijain");
+
+      const response = await fetch(
+        "https://api.cloudinary.com/v1_1/vaishalijain/image/upload",
+        {
+          method: "POST",
+          body: data,
+        }
+      );
+      const result = await response.json();
+      setFormData((prev) => ({ ...prev, profilePhoto: result.url }));
+      toast.success("Image uploaded successfully!");
+    } catch (error) {
+      toast.error("Failed to upload image. Please try again.");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleFileChange = (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+    uploadImage(file);
   };
 
   // registration details saving in database
@@ -440,13 +473,15 @@ export default function Register() {
               </div>
             </div>
 
-            <input
-              type="file"
-              name="profilePhoto"
-              className="w-full p-3 mb-4 border rounded"
-              accept="image/jpeg,image/png"
-              onChange={(e) => setFiles(Array.from(e.target.files))}
-            />
+            {/* profile photo */}
+
+            <div>
+              <label>Upload Profile Photo</label>
+              <input type="file" accept="image/*" onChange={handleFileChange} />
+              {formData.profilePhoto && (
+                <img src={formData.profilePhoto} alt="Profile" width="100" />
+              )}
+            </div>
           </>
         )}
 

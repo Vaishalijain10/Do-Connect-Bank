@@ -82,7 +82,6 @@ export async function registerController(req, res) {
     }
 
     console.log("Request Body:", req.body);
-    console.log("Uploaded File:", req.file);
 
     const {
       firstName,
@@ -95,6 +94,7 @@ export async function registerController(req, res) {
       address,
       password,
       digitalPin,
+      profilePhoto,
     } = req.body;
 
     try {
@@ -127,9 +127,7 @@ export async function registerController(req, res) {
       user.balance = 0; // Initial balance
       user.tempOtp = null; // Clear OTP after registration
       // Check if a profile photo is uploaded and save its path
-      if (req.file) {
-        user.profilePhoto = req.file.filename;
-      }
+      user.profilePhoto = profilePhoto;
 
       await user.save();
       console.log("User registered successfully.");

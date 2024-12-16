@@ -14,7 +14,6 @@ import {
   requestForgotPasswordOtp,
   verifyForgotPasswordOtp,
 } from "../controllers/userController.js";
-// import { upload } from "../library/Multer.js";
 
 const router = express.Router();
 
@@ -31,7 +30,6 @@ router.get("/get-current-user-details/:userId", getCurrentUserDetails);
 router.post("/verifyDigitalPin", verifyDigitalPin);
 
 router.put("/editUserDetails", editUserDetails);
-
 
 router.put("/resetPassword", resetPassword);
 

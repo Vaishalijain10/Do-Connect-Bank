@@ -3,7 +3,7 @@ import { Link } from "react-router-dom";
 import { useSelector } from "react-redux";
 import { baseUrl } from "../api/URL";
 import { RiseLoader } from "react-spinners";
-import defaultImage from "../images/Logo2.jpeg";
+// import defaultImage from "../images/Logo2.jpeg";
 
 export default function ViewUserDetails() {
   // Access user data from Redux
@@ -11,12 +11,8 @@ export default function ViewUserDetails() {
   console.log("View user details", user);
   // view-user-details
   const [loading, setLoading] = useState(true);
-
-  const isLocalHost = window.location.hostname === "localhost";
-
-  const imgLink = isLocalHost
-    ? `${baseUrl}/${user.userData?.profilePhoto}`
-    : defaultImage;
+  // image
+  const imgLink = user.userData?.profilePhoto;
 
   useEffect(() => {
     if (user?.userData) {
