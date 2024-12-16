@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { useSelector } from "react-redux";
-import { baseUrl } from "../api/URL";
 import { RiseLoader } from "react-spinners";
 // import defaultImage from "../images/Logo2.jpeg";
 

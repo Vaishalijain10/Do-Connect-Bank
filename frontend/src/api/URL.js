@@ -8,3 +8,5 @@ export const baseUrl = isLocalhost
 
 export const userUrl = `${baseUrl}/user`;
 export const accountUrl = `${baseUrl}/account`;
+
+

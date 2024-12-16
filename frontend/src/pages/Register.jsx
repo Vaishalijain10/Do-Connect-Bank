@@ -139,16 +139,13 @@ export default function Register() {
     try {
       const data = new FormData();
       data.append("file", file);
-      data.append("upload_preset", "Do-Co Bank");
-      data.append("cloud_name", "vaishalijain");
+      data.append("upload_preset", process.env.upload_preset);
+      data.append("cloud_name", process.env.cloud_name);
 
-      const response = await fetch(
-        "https://api.cloudinary.com/v1_1/vaishalijain/image/upload",
-        {
-          method: "POST",
-          body: data,
-        }
-      );
+      const response = await fetch(process.env.cloudinary_api, {
+        method: "POST",
+        body: data,
+      });
       const result = await response.json();
       setFormData((prev) => ({ ...prev, profilePhoto: result.url }));
       toast.success("Image uploaded successfully!");
