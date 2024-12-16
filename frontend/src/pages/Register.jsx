@@ -142,6 +142,9 @@ export default function Register() {
       data.append("upload_preset", "Do-Co Bank");
       data.append("cloud_name", "vaishalijain");
 
+      for (let pair of data.entries()) {
+        console.log(`${pair[0]}: ${pair[1]}`);
+      }
       const response = await fetch(
         "https://api.cloudinary.com/v1_1/vaishalijain/image/upload",
         {
@@ -161,7 +164,9 @@ export default function Register() {
 
   const handleFileChange = (e) => {
     const file = e.target.files[0];
-    if (!file) return;
+    if (!file) {
+      return;
+    }
     uploadImage(file);
   };
 
@@ -474,7 +479,7 @@ export default function Register() {
             </div>
 
             {/* profile photo */}
-           
+
             <div>
               <label>Upload Profile Photo</label>
               <input type="file" accept="image/*" onChange={handleFileChange} />

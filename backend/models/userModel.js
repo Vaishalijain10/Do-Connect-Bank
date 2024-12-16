@@ -44,6 +44,8 @@ const UserSchema = mongoose.Schema(
     },
     profilePhoto: {
       type: String,
+      default:
+        "https://res.cloudinary.com/vaishalijain/image/upload/v1734350031/Do-Co%20Bank%20Photos/default.jpg",
     },
     tempOtp: {
       type: String,
